@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-
+import createPath as cp
 def calculate_polygon_area(vertices):
     n = len(vertices)
     area = 0.0
@@ -186,7 +186,6 @@ def take_sub_Points(points, center, intersect_point): #tim toa do diem cua 2 pha
         sub_point2.remove(center)
 
     return sub_point1, sub_point2
-
 def plan (points):
     points.append(points[0])
     index = checkangle(points)
@@ -223,45 +222,73 @@ def plan (points):
     else:
         print('Can not compare S')
         return None
-def recursive(points):
+def split(points):
+    result = []
+    subPoint = [points[0]]
+    for i in range(1, len(points)):
+        if points[i] != subPoint:
+            result.append(points[:i])
+            points = points[i:]
+            subPoint = points[0]
+    print('result', result )
+    return result
+def recursive(points, index = 0):
+    result = []
     a, b = plan(points)
-    
     if a and b:
         if len(a) < len(b):
             print('a', a)
             print('b', b)
             a.append(a[0])
-            recursive(b)
-
+            array = np.array(a)
+            cp.planning(2,-1,array[:,0],array[:,1],[],0)
+            result.extend(a)
+            result_temp = recursive(b,index+1)
+            result.extend(result_temp)
+            cp.Find_intersect(a,1)
         else:
             print('a', a)
             print('b', b)
             b.append(b[0])
-            recursive(a)
+            array = np.array(b)
+            cp.planning(2,-1,array[:,0],array[:,1],[],0)
+            result.extend(b)
+            result_temp = recursive(a, index + 1 )
+            result.extend(result_temp)
+            cp.Find_intersect(b,1)
         oxa,oya= zip(*a)
         plt.plot(oxa, oya )
         oxb,oyb= zip(*b)
         plt.plot(oxb, oyb )
     else:
+        array = np.array(points)
+        cp.planning(2,-1,array[:,0],array[:,1],[],0)
+        oxa,oya= zip(*points)
+        plt.plot(oxa, oya )
         print('a', a)
         print('b', b)
-        return None
+        result.extend(points)
+    return result
 
 #non convex has a angle > 180
-#K2 = [[59, -40],[-10,-40],[-20, -85], [-63, 24], [-31, 56], [52, 26]]
-#K2 = [ [59, -40],[-10,-40],  [-63, 24],[-31, 56] , [52, 26],[-20,0]]
-#K2 = [ [59, -40],[-10,-40],  [-63, 24],[-31, 56] ,[-20,0], [52, 26]]
-#K2 = [ [59, -40],[-10,-40],  [-63, 24],[-20,0],[-31, 56] , [52, 26]]
-#K2 = [ [59, -40],[-10,-40],[-20,0],  [-63, 24] ,[-31, 56], [20, 45], [47,60] , [52, 26]]
-K2 = [ [59, -40],[40, -20], [-10,-40],  [-63, 24],[-31, 56],[-3,45], [20,56] ,  [52, 26]] #xbisme da sua
+# K2 = [[59, -40],[-10,-40],[-20, -85], [-63, 24], [-31, 56], [52, 26]]
+# K2 = [ [59, -40],[-10,-40],  [-63, 24],[-31, 56] , [52, 26],[-20,0]]  
+# K2 = [ [59, -40],[-10,-40],  [-63, 24],[-31, 56] ,[-20,0], [52, 26]]
+# K2 = [ [59, -40],[-10,-40],  [-63, 24],[-20,0],[-31, 56] , [52, 26]]
+# K2 = [ [59, -40],[-10,-40],[-20,0],  [-63, 24] ,[-31, 56], [20, 45], [47,60] , [52, 26]]
+K2 = [ [59, -40],[40, -20], [-10,-40],  [-63, 24],[-60, 48],[-45,45],[-31, 56],[-3,45], [20,56] ,  [52, 26]] #xbisme da sua
 # # K2 = [ [0, 4],[3,-1],  [1, -1],[-2, -2] ]
 # # K2 = [[0, 0], [3, 2], [6, -3], [4,-3], [1, -4]]
-# # K2 = [[0, -1], [-2, 1], [-1, 2], [-1, 3], [3, 1] ]
+# K2 = [[0, -1], [-2, 1], [-1, 2], [-1, 3], [3, 1] ]
 # # K2 =[[-4, -4], [-6, 0], [-2, 4], [-8, 6], [5, 10], [10, 8], [8,2], [3, -4]]
 
 # print('K2', K2)
+plt.figure()
 points = K2
 ox,oy= zip(*K2)
-
-recursive(points)
+result = recursive(points)
+# result1 = split(result)
+# points = points.append(points[0])
+# plt.plot(ox, oy,'-xk',label = 'range')
+print('result', result)
 plt.show()
