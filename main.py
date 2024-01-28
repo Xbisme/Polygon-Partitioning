@@ -232,8 +232,9 @@ def split(points):
             subPoint = points[0]
     print('result', result )
     return result
+result = []
 def recursive(points, index = 0):
-    result = []
+
     a, b = plan(points)
     if a and b:
         if len(a) < len(b):
@@ -242,9 +243,9 @@ def recursive(points, index = 0):
             a.append(a[0])
             array = np.array(a)
             cp.planning(2,-1,array[:,0],array[:,1],[],0)
-            result.extend(a)
-            result_temp = recursive(b,index+1)
-            result.extend(result_temp)
+            result.append(a)
+            recursive(b,index+1)
+            # result.append(result_temp)
             cp.Find_intersect(a,1)
         else:
             print('a', a)
@@ -252,9 +253,9 @@ def recursive(points, index = 0):
             b.append(b[0])
             array = np.array(b)
             cp.planning(2,-1,array[:,0],array[:,1],[],0)
-            result.extend(b)
-            result_temp = recursive(a, index + 1 )
-            result.extend(result_temp)
+            result.append(b)
+            recursive(a, index + 1 )
+            # result.append(result_temp)
             cp.Find_intersect(b,1)
         oxa,oya= zip(*a)
         plt.plot(oxa, oya )
@@ -267,8 +268,8 @@ def recursive(points, index = 0):
         plt.plot(oxa, oya )
         print('a', a)
         print('b', b)
-        result.extend(points)
-    return result
+        result.append(points)
+    return None
 
 #non convex has a angle > 180
 # K2 = [[59, -40],[-10,-40],[-20, -85], [-63, 24], [-31, 56], [52, 26]]
@@ -286,9 +287,13 @@ K2 = [ [59, -40],[40, -20], [-10,-40],  [-63, 24],[-60, 48],[-45,45],[-31, 56],[
 plt.figure()
 points = K2
 ox,oy= zip(*K2)
-result = recursive(points)
+recursive(points)
+print('poly1', result[0])
+print('poly2', result[1])
+print('poly3', result[2])
+print('poly4', result[3])
 # result1 = split(result)
 # points = points.append(points[0])
-# plt.plot(ox, oy,'-xk',label = 'range')
-print('result', result)
+plt.plot(ox, oy,'-xk',label = 'range')
+# print('result', result)
 plt.show()
