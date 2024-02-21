@@ -168,15 +168,19 @@ class Find_intersect():
             # print("th", self.th)
             # print("min_x", min(cx))
             # print("min_y", min(cy))
+        min_x = 0
+        min_y = 0
         if min(cx) < 0:
+            min_x = min(cx)
             self.x_ori = self.x_ori + min(cx)
             # print("x_ori1", self.x_ori)
             cx = list(np.array(cx) - min(cx))
         if min(cy) < 0:
+            min_y = min(cy)
             self.y_ori = self.y_ori + min(cy)
             # print("y_ori1", self.y_ori)
             cy = list(np.array(cy) - min(cy))
-        return cx, cy,
+        return cx, cy,min_x, min_y
     def convert_point(self, p_R): #convert other point
         if len(p_R) == 0:
             return None, None
@@ -197,15 +201,15 @@ class Find_intersect():
         cy = (float(np.squeeze(np.array(temp[1]))))
 
         return  cx, cy
-    def in_convert(self,cx, cy):
+    def in_convert(self,cx, cy,min_x,min_y):
      # Dịch và xoay, scale lại hình
         in_cx = []
         in_cy = []
         # print("x_ori2", self.x_ori)
         # print("y_ori2", self.y_ori)
         # print("th2", self.th)
-        T_matrix = np.matrix([[np.cos(self.th), -np.sin(self.th), 0, self.x_ori],
-                              [np.sin(self.th),  np.cos(self.th), 0, self.y_ori],
+        T_matrix = np.matrix([[np.cos(self.th), -np.sin(self.th), 0,      min_x],
+                              [np.sin(self.th),  np.cos(self.th), 0,      min_y],
                               [0,                0,               1,          0],
                               [0,                0,               0,          1]])
         for i in range(len(cx)):
@@ -238,12 +242,12 @@ class Find_intersect():
         self.resolution = round(resolution*self.scale_para)
 def planning(resolution, dr_move, xo, yo, p_R, len_landmark):# p_R :current_position_Robot_leader, best is intersect point
     emp = Find_intersect(resolution, dr_move)
-    ox, oy = emp.convert(xo, yo)
+    ox, oy,min_x,min_y = emp.convert(xo, yo)
     pRx, pRy = emp.convert_point(p_R)
     cx, cy = emp.find_intersect(ox, oy, pRx, pRy, len_landmark)
     # print("cx", cx)
     # print("cy", cy) 
-    x, y = emp.in_convert(cx, cy)
+    x, y = emp.in_convert(cx, cy,min_x,min_y)
     plt.plot(xo,yo)
     plt.plot(x,y)
     plt.show()
