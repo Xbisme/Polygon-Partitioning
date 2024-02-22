@@ -53,7 +53,6 @@ def line_eq(point_1, point_2):
 
 # tim diem giao
 def find_intersect_point(points, index_center):
-    index_angel = checkangle(points)
     point1 = points[index_center]
     # print("point1 = ", point1)
     point2 = points[index_center-1]
@@ -76,7 +75,7 @@ def find_intersect_point(points, index_center):
             # print("point2x =", points[i+1])
             x = eq2_solve([a,b,c], [a1, b1, c1])
             # print("x1",x)
-            print("Done x1")
+            # print("Done x1")
             no.append(list(x))
         if(check_side([a2, b2, c2], points[i], points[i+1])):
             # if i == tow: continue
@@ -85,9 +84,9 @@ def find_intersect_point(points, index_center):
             # print("point1x =", points[i])
             # print("point2x =", points[i+1])
             # print("x2",x)
-            print("Done x2")
+            # print("Done x2")
             no.append(list(x))
-        print("no", no)
+        # print("no", no)
     return no
 def check_point_on_line(a, b, c, x, y):
     right_side = a * x + b * y + c
@@ -158,6 +157,7 @@ def sort_points1(points,sub,index_center, intersect_point):
     point2 = points[index_center-1]
     
     a,b,c = line_eq(point1, point2)
+    index = 0
     for i in range(1, len(points)-1):
         if  i == index_center - 1:
             continue
@@ -166,23 +166,32 @@ def sort_points1(points,sub,index_center, intersect_point):
         x = eq2_solve([a,b,c], [a1,b1,c1])
         if(intersect_point == x.tolist()):
             # print("before add 1",points)
-            points.insert(i + 1, intersect_point)
+            if(intersect_point in points):
+                index =i+2
+                points.insert(i+2, intersect_point)
+            points.insert(i+1, intersect_point)
+            index = i+1
             check = 1
             # print("after add 1",points)
             # print("success")
             break
     # print("check",check)
+    check1  = 0
     if check == 0:
-        # print("before add",points)
-        points.insert(0,intersect_point)
-        # print("after add ",points)
+        if intersect_point not in points:
+            # print("before add",points)
+            points.insert(0,intersect_point)
+            # print("after add",points)
+
     sorted_point = sorted([x for x in sub if x in points], key=lambda x: points.index(x))
     # print("sorted_point", sorted_point)
-    points.remove(intersect_point)
+    
+    points.pop(index)
     return sorted_point
 def take_sub_Points(points, center, intersect_point): #tim toa do diem cua 2 phan map
-    sub_point1 = [center, intersect_point]
+    # print("inter",intersect_point)
 
+    sub_point1 = [center, intersect_point]
     sub_point2 = [center, intersect_point]
     index_angel = checkangle(points)
     special_point = []
@@ -204,10 +213,17 @@ def take_sub_Points(points, center, intersect_point): #tim toa do diem cua 2 pha
         special_point = points[tow]
     else:
         special_point = points[index-1]
+    # print("special_point", special_point)
     index_special_point = points.index(special_point)
     new_points = []
     new_points.extend(points)
-    
+
+    ## vua moi sua xong
+    # if(intersect_point in points):
+    #     new_points.remove(points[index])
+    # else:
+    #     new_points.remove(points[index_special_point])
+    #     new_points.remove(points[index])
     new_points.remove(points[index_special_point])
     new_points.remove(points[index])
     # print("new_points", new_points)
@@ -225,12 +241,21 @@ def take_sub_Points(points, center, intersect_point): #tim toa do diem cua 2 pha
     # #tim sub_point chua sap xep
     #
     temp1 = a * new_points[0][0] + b * new_points[0][1] + c
+    # print("new_points", new_points[0])
     sub_point1.append(new_points[0])
     # print('pp',new_points)
     flag  = 0
+    # print("special_point", special_point)
     if new_points[0] == flag_point:
         sub_point1.append(special_point)
         flag = 1
+    if flag_point == special_point:
+        sub_point2.append(special_point)
+        flag = 2
+    ## sua 1
+    # if intersect_point in points:
+    #     sub_point2.append(special_point)
+    #     flag = 2
     for i in range(1, len(new_points) - 1):
         temp2 = a * new_points[i][0] + b * new_points[i][1] + c
         if (temp1 * temp2 > 0):
@@ -246,27 +271,44 @@ def take_sub_Points(points, center, intersect_point): #tim toa do diem cua 2 pha
                 sub_point2.append(special_point)
                 flag = 2
     #
-    # print('sub1', sub_point1)
-    # print('sub2', sub_point2)
+    # print('sub11', sub_point1)
+    # print('sub21', sub_point2)
+    # for element in sub_point1:
+    #     if sub_point1.count(element) == 2:
+    #         sub_point1.remove(element)
+    # for element in sub_point2:
+    #     if sub_point2.count(element) == 2:
+    #         sub_point2.remove(element)
+    has_seen = []
+    # print('sub_point1', sub_point1)
+    # print('sub_point2', sub_point2)
+    temp_sub_point1 =  [x for x in sub_point1 if x not in has_seen and not has_seen.append(x)]
+    has_seen = []
+    temp_sub_point2 = [x for x in sub_point2 if x not in has_seen and not has_seen.append(x)]
+    sub_point1 = list(temp_sub_point1)
+    sub_point2 = list(temp_sub_point2)
+    # print('sub_point11', sub_point1)
+    # print('sub_point22', sub_point2)
     if not sub_point1 or not sub_point2:
         return None, None
     # sub_point1 = sort_points(sub_point1)
     # sub_point2 = sort_points(sub_point2)
     sub_point1 = sort_points1(points, sub_point1, index, intersect_point)
     sub_point2 = sort_points1(points, sub_point2, index,intersect_point)
-    # print('sub_point22', sub_point22)
-    # print("sub_point2", sub_point2)
+    # print('sort_1', sub_point1)
+    # print("sort_2", sub_point2)
     if (flag == 1):
         # print("center", center)
         sub_point1.remove(center)
     elif (flag == 2):
         # print("center", center)
         sub_point2.remove(center)
-    
+        
 
     # print('sub1', sub_point1)
     # print('sub2', sub_point2)
     return sub_point1, sub_point2
+
 def plan (points):
     points.append(points[0])
     index = checkangle(points)
@@ -281,12 +323,30 @@ def plan (points):
     # print("center", center )
     
     inter_P = find_intersect_point(points, index[0])
+     
     if(len(inter_P) < 2):
-        sub_point1, sub_point2 = take_sub_Points(points, center, inter_P[0])
-        return sub_point1, sub_point2
-    # print(inter_P)
+        next_index = index[0] + 1
+        # print("next_index", next_index)
+        a,b,c = line_eq(center, points[next_index])
+        check =  a*inter_P[0][0] + b*inter_P[0][1] + c
+        print("check", check)
+        if (round(check) == 0):
+            next_index = index[0] - 1
+            a,b,c = line_eq(center, points[next_index])
+        for i in range(len(points)-1):
+            if i == next_index:
+                continue
+            if i in index:
+                continue
+            else:
+                check1 = a*points[i][0] + b*points[i][1] + c
+                if check1 == 0:
+                    inter_P.append(points[i])
+        print("points", points[next_index])
+    print("inter_P", inter_P)  
     sub_point1, sub_point2 = take_sub_Points(points, center, inter_P[0])
     sub_point3, sub_point4 = take_sub_Points(points, center, inter_P[1])
+    # print("inter_P", inter_P)   
     if not sub_point1 or not sub_point3:
         print('function take_sub_Points return None')
         return None, None
@@ -313,17 +373,17 @@ def plan (points):
 result = []
 def recursive(points, index = 0):
     a, b = plan(points)
-    # if index == 0: 
-    #     # plt.figure()
-    #     if a:
-    #         a.append(a[0])
-    #         oxa,oya= zip(*a)
-    #         plt.plot(oxa, oya )
-    #     if b:
-    #         b.append(b[0])
-    #         oxb,oyb= zip(*b)
-    #         plt.plot(oxb, oyb )
-    #         return None
+    if index == 0: 
+        # plt.figure()
+        if a:
+            a.append(a[0])
+            oxa,oya= zip(*a)
+            plt.plot(oxa, oya )
+        if b:
+            b.append(b[0])
+            oxb,oyb= zip(*b)
+            plt.plot(oxb, oyb )
+            return None
     if a and b:
         if len(a) < len(b):
             # print('a', a)
@@ -351,15 +411,15 @@ def recursive(points, index = 0):
             recursive(a, index + 1 )
             # result.append(result_temp)
             cp.Find_intersect(b,-1)
-        oxa,oya= zip(*a)
-        plt.plot(oxa, oya )
-        oxb,oyb= zip(*b)
-        plt.plot(oxb, oyb )
+        # oxa,oya= zip(*a)
+        # plt.plot(oxa, oya )
+        # oxb,oyb= zip(*b)
+        # plt.plot(oxb, oyb )
     else:
         array = np.array(points)
         cp.planning(2,-1,array[:,0],array[:,1],[],0)
-        oxa,oya= zip(*points)
-        plt.plot(oxa, oya )
+        # oxa,oya= zip(*points)
+        # plt.plot(oxa, oya )
         # print('a', a)
         # print('b', b)
         result.append(points)
@@ -369,25 +429,18 @@ def recursive(points, index = 0):
 # K2 = [[59, -40],[-10,-40],[-20, -85], [-63, 24], [-31, 56], [52, 26]]
 # K2 = [ [59, -40],[-10,-40],  [-63, 24],[-31, 56] , [52, 26],[-20,0]]  
 # K2 = [ [59, -40],[-10,-40],  [-63, 24],[-31, 56] ,[-20,0], [52, 26]]
-# K2 = [ [59, -40],[-10,-40],  [-63, 24],[- 20,0],[-31, 56] , [52, 26]]
 # K2 = [ [59, -40],[-10,-40],[-20,0],  [-63, 24] ,[-31, 56], [20, 45], [47,60] , [52, 26]]
 # K2 = [ [59, -40],[40, -20], [-10,-40], [-46,-30],[-36.5,-8], [-63, 24],[-60, 48],[-45,45],[-31, 56] ,  [52, 26]] #xbisme da sua
-# K2 = [ [59, -40],[40, -20], [-10,-40], [-46,-30],[-36.5,-8], [-63, 24],[-60, 48],[-45,45],[-31, 56] ,  [52, 26]] #xbisme da sua3
-K2 = [ [59, -40],[40, -20], [-10,-40],  [-63, 24],[-60, 48],[-45,45],[-31, 56],[-3,45], [20,56] ,  [52, 26]] #xbisme da sua 1
-# K2 = [ [59, -40],[40, -20], [15, -30],[26, -39],[-10,-40],  [-63, 24],[-60, 48],[-45,45],[-31, 56],[52, 26]] #xbisme da sua 2
+# K2 = [ [59, -40],[40, -20], [-10,-40], [-46,-30],[-36.5,-8], [-63, 24],[-60, 48],[-45,45],[-31, 56] ,  [52, 26]] #xbisme da sua3  
+# K2 = [ [59, -40],[40, -20], [-10,-40],  [-63, 24],[-60, 48],[-45,45],[-31, 56],[-3,45], [20,56] ,  [52, 26]] #xbisme da sua 1
+K2 = [ [59, -40],[40, -20], [15, -30],[26, -39],[-10,-40],  [-63, 24],[-60, 48],[-45,45],[-31, 56],[52, 26]] #xbisme da sua 2;
 # K2 = [ [59, -40],[40, -20], [15, -30],[26, -39],[-10,-40],  [-63, 24],[-62.04950495049505, 31.603960396039604],[-31, 56],[52, 26]] #xbisme da sua 2
 # K2 = [[56.191860465116285, -13.523255813953487],  [-10, -40], [-63, 24], [-62.04950495049505, 31.603960396039604], [-31, 56], [-3, 45], [20, 56], [52, 26] ]
-# K2 = [[56.191860465116285, -13.523255813953487],  [-10, -40], [-63, 24], [-62.04950495049505, 31.603960396039604], [-31, 56], [-3, 45], [20, 56], [52, 26] ]
-# # K2 = [ [0, 4],[3,-1],  [1, -1],[-2, -2] ]
-# # K2 = [[0, 0], [3, 2], [6, -3], [4,-3], [1, -4]]
-# K2 = [[0, -1], [-2, 1], [-1, 2], [-1, 3], [3, 1] ]
-# # K2 =[[-4, -4], [-6, 0], [-2, 4], [-8, 6], [5, 10], [10, 8], [8,2], [3, -4]]
-
 # print('K2', K2)
 plt.figure()
 points = K2
-recursive(points)
 # points = points.append(points[0])
+recursive(points)
 ox,oy= zip(*K2)
 # print('poly1', result[0])
 # print('poly2', result[1])
