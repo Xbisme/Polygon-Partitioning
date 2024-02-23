@@ -329,7 +329,7 @@ def plan (points):
         # print("next_index", next_index)
         a,b,c = line_eq(center, points[next_index])
         check =  a*inter_P[0][0] + b*inter_P[0][1] + c
-        print("check", check)
+        # print("check", check)
         if (round(check) == 0):
             next_index = index[0] - 1
             a,b,c = line_eq(center, points[next_index])
@@ -342,8 +342,8 @@ def plan (points):
                 check1 = a*points[i][0] + b*points[i][1] + c
                 if check1 == 0:
                     inter_P.append(points[i])
-        print("points", points[next_index])
-    print("inter_P", inter_P)  
+        # print("points", points[next_index])
+    # print("inter_P", inter_P)  
     sub_point1, sub_point2 = take_sub_Points(points, center, inter_P[0])
     sub_point3, sub_point4 = take_sub_Points(points, center, inter_P[1])
     # print("inter_P", inter_P)   
@@ -373,24 +373,24 @@ def plan (points):
 result = []
 def recursive(points, index = 0):
     a, b = plan(points)
-    if index == 0: 
-        # plt.figure()
-        if a:
-            a.append(a[0])
-            oxa,oya= zip(*a)
-            plt.plot(oxa, oya )
-        if b:
-            b.append(b[0])
-            oxb,oyb= zip(*b)
-            plt.plot(oxb, oyb )
-            return None
+    # if index == 0: 
+    #     # plt.figure()
+    #     if a:
+    #         a.append(a[0])
+    #         oxa,oya= zip(*a)
+    #         plt.plot(oxa, oya )
+    #     if b:
+    #         b.append(b[0])
+    #         oxb,oyb= zip(*b)
+    #         plt.plot(oxb, oyb )
+    #         return None
     if a and b:
         if len(a) < len(b):
             # print('a', a)
             # print('b', b)
             a.append(a[0])
-            array = np.array(a)
-            cp.planning(2,-1,array[:,0],array[:,1],[],0)
+            # array = np.array(a)
+            # cp.planning(2,-1,array[:,0],array[:,1],[],0)
             result.append(a)
             # b.append(b[0])
             # print('b', b)
@@ -403,8 +403,8 @@ def recursive(points, index = 0):
             # print('a', a)
             # print('b', b)
             b.append(b[0])
-            array = np.array(b)
-            cp.planning(2,-1,array[:,0],array[:,1],[],0)
+            # array = np.array(b)
+            # cp.planning(2,-1,array[:,0],array[:,1],[],0)
             result.append(b)
             # ox,oy= zip(*a)
             # plt.plot(ox,oy)
@@ -416,8 +416,8 @@ def recursive(points, index = 0):
         # oxb,oyb= zip(*b)
         # plt.plot(oxb, oyb )
     else:
-        array = np.array(points)
-        cp.planning(2,-1,array[:,0],array[:,1],[],0)
+        # array = np.array(points)
+        # cp.planning(2,-1,array[:,0],array[:,1],[],0)
         # oxa,oya= zip(*points)
         # plt.plot(oxa, oya )
         # print('a', a)
@@ -431,9 +431,9 @@ def recursive(points, index = 0):
 # K2 = [ [59, -40],[-10,-40],  [-63, 24],[-31, 56] ,[-20,0], [52, 26]]
 # K2 = [ [59, -40],[-10,-40],[-20,0],  [-63, 24] ,[-31, 56], [20, 45], [47,60] , [52, 26]]
 # K2 = [ [59, -40],[40, -20], [-10,-40], [-46,-30],[-36.5,-8], [-63, 24],[-60, 48],[-45,45],[-31, 56] ,  [52, 26]] #xbisme da sua
-# K2 = [ [59, -40],[40, -20], [-10,-40], [-46,-30],[-36.5,-8], [-63, 24],[-60, 48],[-45,45],[-31, 56] ,  [52, 26]] #xbisme da sua3  
+K2 = [ [59, -40],[40, -20], [-10,-40], [-46,-30],[-36.5,-8], [-63, 24],[-60, 48],[-45,45],[-31, 56] ,  [52, 26]] #xbisme da sua3  
 # K2 = [ [59, -40],[40, -20], [-10,-40],  [-63, 24],[-60, 48],[-45,45],[-31, 56],[-3,45], [20,56] ,  [52, 26]] #xbisme da sua 1
-K2 = [ [59, -40],[40, -20], [15, -30],[26, -39],[-10,-40],  [-63, 24],[-60, 48],[-45,45],[-31, 56],[52, 26]] #xbisme da sua 2;
+# K2 = [ [59, -40],[40, -20], [15, -30],[26, -39],[-10,-40],  [-63, 24],[-60, 48],[-45,45],[-31, 56],[52, 26]] #xbisme da sua 2;
 # K2 = [ [59, -40],[40, -20], [15, -30],[26, -39],[-10,-40],  [-63, 24],[-62.04950495049505, 31.603960396039604],[-31, 56],[52, 26]] #xbisme da sua 2
 # K2 = [[56.191860465116285, -13.523255813953487],  [-10, -40], [-63, 24], [-62.04950495049505, 31.603960396039604], [-31, 56], [-3, 45], [20, 56], [52, 26] ]
 # print('K2', K2)
@@ -447,7 +447,15 @@ ox,oy= zip(*K2)
 # print('poly3', result[2])
 # print('poly4', result[2])
 # ox1,oy1 = zip(*result[2])
+
 # plt.plot(ox1, oy1,'-xk',label = 'range')
-# plt.plot(ox, oy,'-xk',label = 'range')
+# print("RESULT",result)
+path_resutl = []
+for i in range(len(result)):
+    array = np.array(result[i])
+    x,y = cp.planning(1,1,array[:,0],array[:,1],[],0)
+    plt.plot(x,y)
+# plt.plot(path_resutl[:,0],path_resutl[:,1])
+plt.plot(ox, oy,'-xk',label = 'range')
 # print('result', result)
 plt.show()

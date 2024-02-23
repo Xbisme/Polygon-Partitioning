@@ -170,16 +170,16 @@ class Find_intersect():
             # print("min_y", min(cy))
         min_x = 0
         min_y = 0
-        if min(cx) < 0:
-            min_x = min(cx)
-            self.x_ori = self.x_ori + min(cx)
-            # print("x_ori1", self.x_ori)
-            cx = list(np.array(cx) - min(cx))
-        if min(cy) < 0:
-            min_y = min(cy)
-            self.y_ori = self.y_ori + min(cy)
-            # print("y_ori1", self.y_ori)
-            cy = list(np.array(cy) - min(cy))
+        # if min(cx) < 0:
+        min_x = min(cx)
+        # self.x_ori = self.x_ori + min(cx)
+        # print("x_ori1", self.x_ori)
+        cx = list(np.array(cx) - min(cx))
+    # if min(cy) < 0:
+        min_y = min(cy)
+        # self.y_ori = self.y_ori + min(cy)
+        # print("y_ori1", self.y_ori)
+        cy = list(np.array(cy) - min(cy))
         return cx, cy,min_x, min_y
     def convert_point(self, p_R): #convert other point
         if len(p_R) == 0:
@@ -208,13 +208,13 @@ class Find_intersect():
         # print("x_ori2", self.x_ori)
         # print("y_ori2", self.y_ori)
         # print("th2", self.th)
-        T_matrix = np.matrix([[np.cos(self.th), -np.sin(self.th), 0,      min_x],
-                              [np.sin(self.th),  np.cos(self.th), 0,      min_y],
+        T_matrix = np.matrix([[np.cos(self.th), -np.sin(self.th), 0,      self.x_ori],
+                              [np.sin(self.th),  np.cos(self.th), 0,      self.y_ori],
                               [0,                0,               1,          0],
                               [0,                0,               0,          1]])
         for i in range(len(cx)):
-            temp = T_matrix * np.array([[cx[i]],
-                                        [cy[i]],
+            temp = T_matrix * np.array([[cx[i] + min_x],
+                                        [cy[i] + min_y],
                                         [0],
                                         [1]])
             in_cx.append(float(np.squeeze(np.array(temp[0])/self.scale_para)))
@@ -248,9 +248,9 @@ def planning(resolution, dr_move, xo, yo, p_R, len_landmark):# p_R :current_posi
     # print("cx", cx)
     # print("cy", cy) 
     x, y = emp.in_convert(cx, cy,min_x,min_y)
-    plt.plot(xo,yo)
-    plt.plot(x,y)
-    plt.show()
+    # plt.plot(xo,yo)
+    # plt.plot(x,y)
+    # plt.show()
     return x, y
 
 # [[59, -40], [52, 26], [-31, 61], [-63, 24], [-36.28155339805825, -40.0], [59, -40]]
